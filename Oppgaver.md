@@ -35,8 +35,6 @@ Sjekk vault for å se om dataen er blitt lagt inn.
 
 ## Oppgave 6
 
-  
-
 Deploy infrastruktur for å vise frem vitsen som ligger i vault basert på skjelettkode og dokumentasjon. Dette gjøres gjennom å deploye et image.
 Se frontend.tf for skjelettkode og https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/deployment for dokumentasjon.
 Nb: Husk terraform validate, terraform plan, terraform apply
@@ -45,12 +43,14 @@ Nb: Husk terraform validate, terraform plan, terraform apply
 
 ## Oppgave 7
 
-  
-  
+Opprett en ingress gjennom kubectl apply -f ingress.yaml og sett opp ingressen fra ingress.tf. Importer staten fra ingress.yaml inn i terraform staten. 
+
+Sjekk om staten er importert gjennom å liste opp innholdet i staten ved å bruke terraform CLI. 
+
 
 ## Oppgave 8
 
-  
+Deploy en secret som ligger i secret.tf. Slett denne fra staten gjennom å bruke terraform CLI. Hint: Start med å liste opp hva som er i staten. 
   
 
 ## Oppgave 9
