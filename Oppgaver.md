@@ -16,16 +16,13 @@ Se https://github.com/tfutils/tfenv
 
 ## Oppgave 3
 
-
-## Oppgave 4
-
 Deploy vault basert på skjelettkode og dokumentasjon.
 Se vault.tf for skjelettkode og bruk https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/deployment for dokumentasjon
 Nb: Husk terraform validate, terraform plan, terraform apply
 
 Sjekk localhost-vault (Sett inn rett adresse) for å se om vault er oppe
 
-## Oppgave 5
+## Oppgave 4
 
 Deploy infrastruktur for å hente en vits fra en nettside med http provideren basert på skjelettkode og dokumentasjon.
 Se http.tf for skjelettkode og bruk https://registry.terraform.io/providers/hashicorp/http/latest/docs/data-sources/http. Denne vitsen skal så legges inn i vault. Bruk https://registry.terraform.io/providers/hashicorp/vault/latest/docs for dokumentasjon.
@@ -33,27 +30,25 @@ Nb: Husk terraform validate, terraform plan, terraform apply
 
 Sjekk vault for å se om dataen er blitt lagt inn. 
 
-## Oppgave 6
+## Oppgave 5
 
 Deploy infrastruktur for å vise frem vitsen som ligger i vault basert på skjelettkode og dokumentasjon. Dette gjøres gjennom å deploye et image.
 Se frontend.tf for skjelettkode og https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/deployment for dokumentasjon.
 Nb: Husk terraform validate, terraform plan, terraform apply
 
-  
-
-## Oppgave 7
+## Oppgave 6
 
 Opprett en ingress gjennom kubectl apply -f ingress.yaml og sett opp ingressen fra ingress.tf. Importer staten fra ingress.yaml inn i terraform staten. 
 
 Sjekk om staten er importert gjennom å liste opp innholdet i staten ved å bruke terraform CLI. 
 
 
-## Oppgave 8
+## Oppgave 7
 
 Deploy en secret som ligger i secret.tf. Slett denne fra staten gjennom å bruke terraform CLI. Hint: Start med å liste opp hva som er i staten. 
   
 
-## Oppgave 9
+## Oppgave 8
 
   
 
