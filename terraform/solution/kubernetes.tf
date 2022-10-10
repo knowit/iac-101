@@ -55,31 +55,6 @@ resource "kubernetes_deployment" "caddy" {
           image = "nginx:1.21.6"
           name  = "example"
 
-          resources {
-            limits = {
-              cpu    = "0.5"
-              memory = "512Mi"
-            }
-            requests = {
-              cpu    = "250m"
-              memory = "50Mi"
-            }
-          }
-
-          liveness_probe {
-            http_get {
-              path = "/"
-              port = 80
-
-              http_header {
-                name  = "X-Custom-Header"
-                value = "Awesome"
-              }
-            }
-
-            initial_delay_seconds = 3
-            period_seconds        = 3
-          }
         }
       }
     }
@@ -88,58 +63,43 @@ resource "kubernetes_deployment" "caddy" {
 
 resource "kubernetes_deployment" "vault" {
   metadata {
-    name = "terraform-example"
+    name = "vault"
     namespace = "roma"
     labels = {
-      test = "MyExampleApp"
+      test = "vault"
     }
   }
 
   spec {
-    replicas = 3
+    replicas = 1
 
     selector {
       match_labels = {
-        test = "MyExampleApp"
+        test = "Vault"
       }
     }
 
     template {
       metadata {
         labels = {
-          test = "MyExampleApp"
+          test = "Vault"
         }
       }
 
       spec {
         container {
-          image = "nginx:1.21.6"
-          name  = "example"
-
-          resources {
-            limits = {
-              cpu    = "0.5"
-              memory = "512Mi"
-            }
-            requests = {
-              cpu    = "250m"
-              memory = "50Mi"
-            }
+          image = "hashicorp/vault"
+          name  = "vault"
+          env {
+            name  = "VAULT_DEV_LISTEN_ADDRESS"
+            value = "0.0.0.0:1234"
           }
-
-          liveness_probe {
-            http_get {
-              path = "/"
-              port = 80
-
-              http_header {
-                name  = "X-Custom-Header"
-                value = "Awesome"
-              }
-            }
-
-            initial_delay_seconds = 3
-            period_seconds        = 3
+          env {
+            name = "VAULT_DEV_ROOT_TOKEN_ID"
+            value = "myroot"
+          }
+          port {
+            container_port = 8200:1234
           }
         }
       }
