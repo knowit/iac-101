@@ -3,21 +3,32 @@ provider "kubernetes" {
   config_context = "my-context"
 }
 
- resource "kubernetes_namespace" "vault_namespace" {
+ resource "kubernetes_namespace" "roma_namespace" {
   metadata {
-    name = "vault"
+    name = "roma"
   }
 }
 
-resource "kubernetes_namespace" "app_namespace" {
+resource "kubernetes_ingress_class" "example" {
   metadata {
-    name = "app"
+    name = "example"
+    namespace = "roma"
+  }
+
+  spec {
+    controller = "example.com/ingress-controller"
+    parameters {
+      api_group = "k8s.example.com"
+      kind      = "IngressParameters"
+      name      = "external-lb"
+    }
   }
 }
 
 resource "kubernetes_deployment" "caddy" {
   metadata {
-    name = "terraform-example"
+    name = "caddy"
+    namespace = "roma"
     labels = {
       test = "MyExampleApp"
     }
@@ -78,6 +89,7 @@ resource "kubernetes_deployment" "caddy" {
 resource "kubernetes_deployment" "vault" {
   metadata {
     name = "terraform-example"
+    namespace = "roma"
     labels = {
       test = "MyExampleApp"
     }
