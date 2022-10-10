@@ -1,6 +1,5 @@
 provider "kubernetes" {
   config_path    = "~/.kube/config"
-  config_context = "my-context"
 }
 
  resource "kubernetes_namespace" "roma_namespace" {
@@ -9,64 +8,57 @@ provider "kubernetes" {
   }
 }
 
-resource "kubernetes_ingress_class" "example" {
+resource "kubernetes_ingress_v1" "roma_ingress" {
   metadata {
-    name = "example"
+    name = "ingress"
     namespace = "roma"
   }
 
   spec {
-    controller = "example.com/ingress-controller"
-    parameters {
-      api_group = "k8s.example.com"
-      kind      = "IngressParameters"
-      name      = "external-lb"
-    }
-  }
-}
-
-resource "kubernetes_deployment" "caddy" {
-  metadata {
-    name = "caddy"
-    namespace = "roma"
-    labels = {
-      test = "MyExampleApp"
-    }
-  }
-
-  spec {
-    replicas = 3
-
-    selector {
-      match_labels = {
-        test = "MyExampleApp"
-      }
-    }
-
-    template {
-      metadata {
-        labels = {
-          test = "MyExampleApp"
-        }
-      }
-
-      spec {
-        container {
-          image = "nginx:1.21.6"
-          name  = "example"
-
+    rule {
+      http {
+        path {
+          backend {
+            service {
+              name = "vault-service"
+              port {
+                number = 8200
+              }
+            }
+          }
+          path = "/"
         }
       }
     }
   }
 }
+
+resource "kubernetes_service_v1" "vault_service" {
+  metadata {
+    name = "vault-service"
+    namespace = "roma"
+  }
+  spec {
+    selector = {
+      app = "vault"
+    }
+    session_affinity = "ClientIP"
+    port {
+      port        = 8200
+      target_port = 8200
+    }
+
+    type = "ClusterIP"
+  }
+}
+
 
 resource "kubernetes_deployment" "vault" {
   metadata {
     name = "vault"
     namespace = "roma"
     labels = {
-      test = "vault"
+      app = "vault"
     }
   }
 
@@ -75,14 +67,14 @@ resource "kubernetes_deployment" "vault" {
 
     selector {
       match_labels = {
-        test = "Vault"
+        app = "vault"
       }
     }
 
     template {
       metadata {
         labels = {
-          test = "Vault"
+          app = "vault"
         }
       }
 
@@ -92,15 +84,52 @@ resource "kubernetes_deployment" "vault" {
           name  = "vault"
           env {
             name  = "VAULT_DEV_LISTEN_ADDRESS"
-            value = "0.0.0.0:1234"
+            value = "0.0.0.0:8200"
           }
           env {
             name = "VAULT_DEV_ROOT_TOKEN_ID"
             value = "myroot"
           }
           port {
-            container_port = 8200:1234
+            container_port = 8200
+            host_port = 8200
           }
+        }
+      }
+    }
+  }
+}
+
+resource "kubernetes_deployment" "caddy" {
+  metadata {
+    name = "caddy"
+    namespace = "roma"
+    labels = {
+      test = "caddy"
+    }
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        test = "caddy"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          test = "caddy"
+        }
+      }
+
+      spec {
+        container {
+          image = "nginx:1.21.6"
+          name  = "caddy"
+
         }
       }
     }
