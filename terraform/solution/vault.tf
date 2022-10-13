@@ -1,26 +1,18 @@
 resource "kubernetes_deployment" "vault" {
   metadata {
     name = "vault"
-    namespace = "roma"
-    labels = {
-      app = "vault"
-    }
+    # TODO
   }
 
   spec {
     replicas = 1
-
     selector {
-      match_labels = {
-        app = "vault"
-      }
+      # TODO
     }
 
     template {
       metadata {
-        labels = {
-          app = "vault"
-        }
+        # TODO
       }
 
       spec {
@@ -46,22 +38,8 @@ resource "kubernetes_deployment" "vault" {
 }
 
 resource "kubernetes_service" "vault_service" {
-  metadata {
-    name = "vault-service"
-    namespace = "roma"
-  }
-  spec {
-    selector = {
-      app = "vault"
-    }
-    session_affinity = "ClientIP"
-    port {
-      port        = 8200
-      target_port = 8200
-    }
-
-    type = "LoadBalancer"
-  }
+  #TODO
+  #Hvis ikke docker desktop - Bruk ClusterIP + port forwarding
 }
 
 
