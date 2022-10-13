@@ -36,7 +36,7 @@ resource "kubernetes_deployment" "webapp" {
           name  = "webapp"
           env {
             name = "JOKE"
-            value = data.vault_generic_secret.the_joke.data_json
+            value = jsondecode(data.vault_generic_secret.the_joke.data_json).joke
           }
           port {
             container_port = 8080

@@ -19,7 +19,7 @@ provider "kubernetes" {
   config_path    = "~/.kube/config"
 }
 
- resource "kubernetes_namespace" "roma_namespace" {
+resource "kubernetes_namespace" "roma_namespace" {
   metadata {
     name = "roma"
   }
