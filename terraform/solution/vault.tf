@@ -1,38 +1,67 @@
-terraform {
-  required_providers {
-    vault = {
-      source = "hashicorp/vault"
-      version = "3.9.1"
+resource "kubernetes_deployment" "vault" {
+  metadata {
+    name = "vault"
+    namespace = "roma"
+    labels = {
+      app = "vault"
     }
-    http = {
-      source = "hashicorp/http"
-      version = "3.1.0"
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        app = "vault"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app = "vault"
+        }
+      }
+
+      spec {
+        container {
+          image = "hashicorp/vault"
+          name  = "vault"
+          env {
+            name  = "VAULT_DEV_LISTEN_ADDRESS"
+            value = "0.0.0.0:8200"
+          }
+          env {
+            name = "VAULT_DEV_ROOT_TOKEN_ID"
+            value = "myroot"
+          }
+          port {
+            container_port = 8200
+            host_port = 8200
+          }
+        }
+      }
     }
   }
 }
 
-provider "http" {}
+resource "kubernetes_service" "vault_service" {
+  metadata {
+    name = "vault-service"
+    namespace = "roma"
+  }
+  spec {
+    selector = {
+      app = "vault"
+    }
+    session_affinity = "ClientIP"
+    port {
+      port        = 8200
+      target_port = 8200
+    }
 
-provider "vault" {
-  address = "http://localhost:8200"
-  token = "myroot"
-  skip_tls_verify = true
-  skip_child_token = true
-}
-
-data "http" "chuck" {
-  url = "https://api.chucknorris.io/jokes/random"
-  request_headers = {
-    Accept = "application/json"
+    type = "LoadBalancer"
   }
 }
 
-resource "vault_generic_secret" "example" {
-  path = "secret/joke"
 
-  data_json = jsonencode(
-    {
-      "joke"   = jsondecode(data.http.chuck.response_body).value,
-    }
-  )
-}
