@@ -7,20 +7,20 @@ terraform {
   }
 }
 
-#   provider "vault" {
-#     address = "http://localhost:8200"
-#     token = "myroot"
-#     skip_tls_verify = true
-#     skip_child_token = true
-#   }
+  # provider "vault" {
+  #   address = "http://localhost:8200"
+  #   token = "myroot"
+  #   skip_tls_verify = true
+  #   skip_child_token = true
+  # }
 
-#   resource "vault_generic_secret" "example" {
-#     path = "secret/foo"
+  # resource "vault_generic_secret" "example" {
+  #   path = "secret/foo"
 
-#     data_json = jsonencode(
-#       {
-#         "foo"   = "bar",
-#         "pizza" = "cheese"
-#       }
-#     )
-#   }
+  #   data_json = jsonencode(
+  #     {
+  #       "foo"   = "bar",
+  #       "pizza" = "cheese"
+  #     }
+  #   )
+  # }

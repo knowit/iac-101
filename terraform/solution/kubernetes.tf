@@ -8,32 +8,7 @@ provider "kubernetes" {
   }
 }
 
-resource "kubernetes_ingress_v1" "roma_ingress" {
-  metadata {
-    name = "ingress"
-    namespace = "roma"
-  }
-
-  spec {
-    rule {
-      http {
-        path {
-          backend {
-            service {
-              name = "vault-service"
-              port {
-                number = 8200
-              }
-            }
-          }
-          path = "/"
-        }
-      }
-    }
-  }
-}
-
-resource "kubernetes_service_v1" "vault_service" {
+resource "kubernetes_service" "vault_service" {
   metadata {
     name = "vault-service"
     namespace = "roma"
@@ -48,7 +23,25 @@ resource "kubernetes_service_v1" "vault_service" {
       target_port = 8200
     }
 
-    type = "ClusterIP"
+    type = "LoadBalancer"
+  }
+}
+
+resource "kubernetes_service" "webapp_service" {
+  metadata {
+    name = "webapp-service"
+    namespace = "roma"
+  }
+  spec {
+    selector = {
+      app = "webapp"
+    }
+    port {
+      port        = 8080
+      target_port = 8080
+    }
+
+    type = "LoadBalancer"
   }
 }
 
@@ -100,12 +93,12 @@ resource "kubernetes_deployment" "vault" {
   }
 }
 
-resource "kubernetes_deployment" "caddy" {
+resource "kubernetes_deployment" "webapp" {
   metadata {
-    name = "caddy"
+    name = "webapp"
     namespace = "roma"
     labels = {
-      test = "caddy"
+      app = "webapp"
     }
   }
 
@@ -114,21 +107,28 @@ resource "kubernetes_deployment" "caddy" {
 
     selector {
       match_labels = {
-        test = "caddy"
+        app = "webapp"
       }
     }
 
     template {
       metadata {
         labels = {
-          test = "caddy"
+          app = "webapp"
         }
       }
 
       spec {
         container {
-          image = "nginx:1.21.6"
-          name  = "caddy"
+          image = "ghcr.io/kstigen/iac-101:0.0.2"
+          name  = "webapp"
+          env {
+            name = "JOKE"
+            value = "hahahaha"
+          }
+          port {
+            container_port = 8080
+          }
 
         }
       }
