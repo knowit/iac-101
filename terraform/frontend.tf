@@ -32,7 +32,7 @@ resource "kubernetes_deployment" "webapp" {
 
       spec {
         container {
-          image = "ghcr.io/kstigen/iac-101:0.0.2"
+          image = "ghcr.io/kstigen/iac-101:latest"
           name  = "webapp"
           env {
             name = "JOKE"
