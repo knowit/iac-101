@@ -5,12 +5,12 @@ data "vault_generic_secret" "the_joke" {
   ]
 }
 
-resource "kubernetes_deployment" "webapp" {
+resource "kubernetes_deployment" "frontend" {
   metadata {
-    name = "webapp"
+    name = "frontend"
     namespace = "roma"
     labels = {
-      app = "webapp"
+      app = "frontend"
     }
   }
 
@@ -19,21 +19,21 @@ resource "kubernetes_deployment" "webapp" {
 
     selector {
       match_labels = {
-        app = "webapp"
+        app = "frontend"
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "webapp"
+          app = "frontend"
         }
       }
 
       spec {
         container {
           image = "ghcr.io/kstigen/iac-101:latest"
-          name  = "webapp"
+          name  = "frontend"
           env {
             name = "JOKE"
             value = jsondecode(data.vault_generic_secret.the_joke.data_json).joke
@@ -48,14 +48,14 @@ resource "kubernetes_deployment" "webapp" {
   }
 }
 
-resource "kubernetes_service" "webapp_service" {
+resource "kubernetes_service" "frontend_service" {
   metadata {
-    name = "webapp-service"
+    name = "frontend-service"
     namespace = "roma"
   }
   spec {
     selector = {
-      app = "webapp"
+      app = "frontend"
     }
     port {
       port        = 8080
