@@ -45,11 +45,28 @@ Sjekk om staten er importert gjennom å liste opp innholdet i staten ved å bruk
 
 ## Oppgave 7
 
-Deploy en secret som ligger i secret.tf. Slett denne fra staten gjennom å bruke terraform CLI. Hint: Start med å liste opp hva som er i staten. 
-  
+Opprett en secret i namespacet roma med kubectl:
+```
+# Opprett secret
+kubectl create secret generic test-secret --from-literal=thesecret=hemmelig -n roma
+
+# Verifiser at secret ble lagt inn
+kubectl get secrets -n roma
+
+# Verifiser at secret inneholder korrekt hemmelighet
+kubectl get secret test-secret -o jsonpath='{.data.thesecret}' -n roma | base64 --decode
+```
+
+Importer denne secreten inn i terraform state.
+Hva skjer når du kjører terraform plan etterpå?
+
+Skriv terraform konfigurasjon for den importerte secreten.
 
 ## Oppgave 8
+Deploy en secret som ligger i secret.tf. Slett denne fra staten gjennom å bruke terraform CLI. Hint: Start med å liste opp hva som er i staten. 
 
-  
+
+
+## Oppgave 9
 
 Både frontend.tf og vault.tf bruker en del lignende konfigurasjon. Se om du kan forenkle denne konfigurasjonen med å lage en modul.
