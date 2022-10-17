@@ -38,35 +38,50 @@ Nb: Husk terraform validate, terraform plan, terraform apply
 
 ## Oppgave 6
 
-Opprett en ingress gjennom kubectl apply -f ingress.yaml og sett opp ingressen fra ingress.tf. Importer staten fra ingress.yaml inn i terraform staten. 
-
-Sjekk om staten er importert gjennom å liste opp innholdet i staten ved å bruke terraform CLI. 
-
-
-## Oppgave 7
-
-Opprett en secret i namespacet roma med kubectl:
+Deploy en secret til namespacet roma med terraform.
+Legg inn terraform kode for en kubernetes-secret ([Terraform dokumentasjon](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret))
+### Verifiser at secret ble lagt inn:
 ```
-# Opprett secret
-kubectl create secret generic test-secret --from-literal=thesecret=hemmelig -n roma
-
-# Verifiser at secret ble lagt inn
+Lister alle secrets i namespacet: 
 kubectl get secrets -n roma
 
-# Verifiser at secret inneholder korrekt hemmelighet
+Viser innholdet i en secret:
 kubectl get secret test-secret -o jsonpath='{.data.thesecret}' -n roma | base64 --decode
 ```
+### Fjern/Kommenter ut secreten og kjør kun plan
+Gå inn i konfigen og kommenter ut kodeblokken med kubernetes-secreten.
+Når du kjører terraform plan nå, hva ser du da?
+Hvis terraform har lyst til å kjøre destroy på secreten har du gjort det riktig.
 
-Importer denne secreten inn i terraform state.
-Hva skjer når du kjører terraform plan etterpå?
+For å unngå at den blir destroyed kan vi fjerne den fra state, da blir det som om den aldri har eksistert i terraform sine øyne.
+Dette kan vi gjøre via terraform kommandoer i terminalen, start med å kjøre:
+```
+terraform state
+```
+Først vil vi liste ut alle ressursene vi har i staten og identifisere den ressursen vi ser etter i den listen.
+Deretter bruker vi terraform state kommandoen for sletting på den ressursen.
+```
+terraform plan
+```
+Hva ser du nå?
 
-Skriv terraform konfigurasjon for den importerte secreten.
+## Oppgave 7
+I forrige oppgave lærte vi hvordan fjerne en ressurs fra state, i denne oppgaven lærer man hvordan å legge det til.
+
+For at terraform skal klare å importere en ressurs som ligger utenfor terraform er vi nødt til å ha
+konfig for den typen ressurs vi ønsker å importere.
+
+Vi kan starte med å kommentere inn secreten fra forrige oppgave uten "innmaten".
+Nederst i [terraform dokumentasjonen](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret#import) for kubernetes-secret ser vi eksempel bruk på kommandoen vi trenger.
+
+Etter import er fullført kan vi verifisere at secreten er tilbake i state ved å kjøre:
+```
+terraform show
+```
+Om vi kjører plan igjen nå kan vi støte på feilmeldinger siden konfigurasjonen ikke er lik det vi ser i state.
+For å løse dette kan vi enten kommentere inn igjen resten av konfigen til secreten, eller bruke terraform koden fra terraform show kommandoen å kopiere inn i konfigen vår.
+
 
 ## Oppgave 8
-Deploy en secret som ligger i secret.tf. Slett denne fra staten gjennom å bruke terraform CLI. Hint: Start med å liste opp hva som er i staten. 
-
-
-
-## Oppgave 9
 
 Både frontend.tf og vault.tf bruker en del lignende konfigurasjon. Se om du kan forenkle denne konfigurasjonen med å lage en modul.
